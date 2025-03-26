@@ -66,6 +66,10 @@
   font-weight: 600;
 }
 
+.question .question-text {
+  margin-left: 5px;
+}
+
 .quiz .options {
   display: flex;
   justify-content: space-around;
