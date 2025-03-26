@@ -238,18 +238,57 @@ const quizData = [
 
 function App() {
   const [user, setUser] = useState("Guest");
+  const [result, setResult] = useState(0);
+  const [answered, setAnswered] = useState([]);
 
-  // useEffect(() => {
-  //   document.body.classList("quizData");
-  // }, [quizData]);
+  const checkAnswer = (e, id, givenAns) => {
+    if (!id || answered.find((a) => a === id)) {
+      return;
+    }
+
+    setAnswered([...answered, id]);
+
+    const defaultAns = quizData.filter((q) => q.id === id);
+    const ansValue = defaultAns[0].options.filter((o) => o.valid)[0].option;
+    if (ansValue === givenAns) {
+      e.target.style.backgroundColor = "green";
+      setResult(result + 1);
+    } else {
+      e.target.style.backgroundColor = "red";
+    }
+  };
+
+  const submitQuestions = () => {
+    alert(`Your Score: ${result}`);
+    resetOptions();
+  };
+
+  const resetOptions = () => {
+    // setresult(0);
+    // document.querySelectorAll(".option").forEach((op) => {
+    //   op.style.backgroundColor = "";
+    // });
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    if (user === "Guest") {
+      setUser(prompt("Enter your name:", "Guest"));
+    }
+  }, []);
+
+  console.log(answered);
 
   return (
-    <div className="container">
+    <>
       <div className="sections header">
         <div className="left-section">
           <p>
             <strong>QuizzApp</strong>
           </p>
+        </div>
+        <div className="middle-section">
+          <p>Result: {result}</p>
         </div>
         <div className="right-section">
           <p>
@@ -257,34 +296,65 @@ function App() {
           </p>
         </div>
       </div>
-      <div className="sections title-section">
-        <h2>Savaj's Quiz Bank</h2>
-      </div>
-      <div className="sections note-section">
-        <ul className="notes">
-          <li>All questions are mandetory.</li>
-          <li>You can select only one option.</li>
-          <li>Valid answer get 1 point. No points for Invalid answer.</li>
-        </ul>
-      </div>
+      <div className="container">
+        <div className="sections title-section">
+          <h2>Savaj's Quiz Bank</h2>
+        </div>
+        <div className="sections note-section">
+          <ul className="notes">
+            <li>All questions are mandetory.</li>
+            <li>You can select only one option.</li>
+            <li>Valid answer get 1 point. No points for Invalid answer.</li>
+          </ul>
+        </div>
 
-      <div className="sections quiz-section">
-        <div className="questions">
-          <div className="quiz">
-            <div className="question">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. In,
-              nihil!
-            </div>
-            <div className="options">
-              <button className="option"></button>
-              <button className="option"></button>
-              <button className="option"></button>
-              <button className="option"></button>
-            </div>
+        <div className="sections quiz-section">
+          <div className="questions">
+            {quizData.map((q) => (
+              <div key={q.id}>
+                <div className="quiz">
+                  <div className="question">
+                    <p>
+                      [Q{q.id}]{" "}
+                      <span className="question-text">{q.question}</span>
+                    </p>
+                  </div>
+                  <div className="options">
+                    {q.options.map((opt) => {
+                      return (
+                        <button
+                          key={opt.option}
+                          onClick={(e) => checkAnswer(e, q.id, opt.option)}
+                          className="option"
+                        >
+                          {opt.option}
+                        </button>
+                      );
+                    })}
+                    {/* 
+                  <button className="option"></button>
+                  <button className="option"></button>
+                  <button className="option"></button> */}
+                  </div>
+                </div>
+                <hr />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="sections actions">
+          <div className="action-btns">
+            <button className="reset" onClick={resetOptions}>
+              Reset Questions
+            </button>
+            <button className="reset" onClick={submitQuestions}>
+              Submit
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
